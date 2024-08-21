@@ -128,7 +128,7 @@ public partial class MainWindowViewModel : ViewModelBase
 
         BrowseEmulatorPathCommand = ReactiveCommand.CreateFromTask(BrowseEmulatorPathCommandExecute);
 
-        BrowseProgramPathCommand = ReactiveCommand.Create(BrowseProgramPathCommandExecute);
+        BrowseProgramPathCommand = ReactiveCommand.CreateFromTask(BrowseProgramPathCommandExecute);
 
         SetSelectedJoyPadCommand = ReactiveCommand.Create<int>(SetSelectedJoyPadCommandExecute);
     }
@@ -160,12 +160,7 @@ public partial class MainWindowViewModel : ViewModelBase
         StringBuilder runCommandBuilder = new($"\"{emulatorPath}\"");
 
         if (arguments is not null && arguments.Any())
-        {
-            arguments.ToList().ForEach(arg => {
-                runCommandBuilder.Append(' ');
-                runCommandBuilder.Append(string.Join(' ', arg));
-            });
-        }
+            arguments.ToList().ForEach(arg => runCommandBuilder.Append($" {arg}"));
 
         return runCommandBuilder.ToString();
     }
