@@ -106,6 +106,9 @@ public partial class MainWindowViewModel : ViewModelBase
         _selectProgramFileInteraction = new Interaction<string?, string?>();
 
         _emulatorPathIsX16emu = this.WhenAnyValue(viewModel => viewModel.EmulatorPath).Select(emulatorPath => {
+            if (string.IsNullOrWhiteSpace(emulatorPath))
+                return ValidationState.Valid;
+
             if (File.Exists(EmulatorPath) && (EmulatorPath.EndsWith("x16emu") || EmulatorPath.EndsWith("x16emu.exe")))
                 return ValidationState.Valid;
 
@@ -122,7 +125,10 @@ public partial class MainWindowViewModel : ViewModelBase
         this.ValidationRule(viewModel => viewModel.EmulatorPath, _emulatorPathIsX16emu);
         this.ValidationRule(viewModel => viewModel.DebuggerAddress, _debuggerAddressIsHexadecimal);
 
-        LaunchEmulatorCommandCanExecute = this.WhenAnyValue(x => x.HasErrors, errors => errors == false);
+        LaunchEmulatorCommandCanExecute = this.WhenAnyValue(
+            x => x.HasErrors,
+            x => x.EmulatorPath,
+            (errors, emulatorPath) => !string.IsNullOrWhiteSpace(emulatorPath) && !errors);
 
         LaunchEmulatorCommand = ReactiveCommand.Create(LaunchEmulatorCommandExecute, LaunchEmulatorCommandCanExecute);
 
