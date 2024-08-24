@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Platform.Storage;
@@ -28,17 +29,22 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
         // Get our parent top level control in order to get the needed service (in our sample the storage provider. Can also be the clipboard etc.)
         var topLevel = GetTopLevel(this);
 
-        var emulatorFile = new FilePickerFileType("Only Commander X16 Emulator") {
-            Patterns = ["x16emu", "x16emu.exe" ],
-            AppleUniformTypeIdentifiers = null,
-            MimeTypes = null
+        FilePickerFileType emulatorFile = new ("Executable Files") {
+            AppleUniformTypeIdentifiers = ["public.unix-executable"],
+            MimeTypes = ["application/vnd.microsoft.portable-executable", "application/octet-stream"]
         };
 
-        var storageFiles = await topLevel!.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions() {
+        FilePickerOpenOptions filePickerOptions = new () {
             AllowMultiple = false,
             Title = context.Input,
-            FileTypeFilter = [ emulatorFile, FilePickerFileTypes.All ]
-        });
+            FileTypeFilter = [ emulatorFile, FilePickerFileTypes.All ],
+            SuggestedFileName = "x16emu"
+        };
+
+        if (OperatingSystem.IsWindows())
+            filePickerOptions.SuggestedFileName = "x16emu.exe";
+        
+        var storageFiles = await topLevel!.StorageProvider.OpenFilePickerAsync(filePickerOptions);
 
         context.SetOutput(storageFiles?.Select(x => x.TryGetLocalPath()).FirstOrDefault());
     }
@@ -48,22 +54,13 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
         // Get our parent top level control in order to get the needed service (in our sample the storage provider. Can also be the clipboard etc.)
         var topLevel = GetTopLevel(this);
 
-        var programFile = new FilePickerFileType("Program Files") {
-            Patterns = ["*.prg"],
-            AppleUniformTypeIdentifiers = null,
-            MimeTypes = null
-        };
-
-        var cartridgeFile = new FilePickerFileType("Cartridge Files") {
-            Patterns = ["*.crt"],
-            AppleUniformTypeIdentifiers = null,
-            MimeTypes = null
-        };
+        var programFile = new FilePickerFileType("Program Files") { Patterns = ["*.prg"] };
+        var cartridgeFile = new FilePickerFileType("Cartridge Files") { Patterns = ["*.crt"] };
 
         var basicFile = new FilePickerFileType("Basic Files") {
             Patterns = ["*.bas", "*.txt"],
-            AppleUniformTypeIdentifiers = null,
-            MimeTypes = null
+            AppleUniformTypeIdentifiers = ["public.plain-text"],
+            MimeTypes = ["text/plain"]
         };
 
         var storageFiles = await topLevel!.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions() {
