@@ -9,7 +9,7 @@
         Icon="/Assets/avalonia-logo.ico"
         Title="Commander X16 Launcher"
         Width="1024" Height="618"
-        MinWidth="600">
+        MinWidth="650">
 
     <Design.DataContext>
         <!-- This only sets the DataContext for the previewer in an IDE,
