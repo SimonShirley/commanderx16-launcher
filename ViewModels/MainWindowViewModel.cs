@@ -109,15 +109,20 @@ public partial class MainWindowViewModel : ViewModelBase
         get => ProccessorModeSelected.Equals("65c02", StringComparison.InvariantCultureIgnoreCase);
     }            
 
-    public ICommand? SetSelectedJoyPadCommand { get; }
+    private readonly ICommand? _setSelectedJoyPadCommand;
+    public ICommand? SetSelectedJoyPadCommand { get => _setSelectedJoyPadCommand; }
 
-    public ICommand? LaunchEmulatorCommand { get; }
+    private readonly ICommand? _launchEmulatorCommand;
+    public ICommand? LaunchEmulatorCommand { get => _launchEmulatorCommand; }
 
-    public ICommand? BrowseEmulatorPathCommand { get; }
+    private readonly ICommand? _browseEmulatorPathCommand;
+    public ICommand? BrowseEmulatorPathCommand { get => _browseEmulatorPathCommand; }
 
-    public ICommand? BrowseProgramPathCommand { get; }
+    private readonly ICommand? _browseProgramPathCommand;
+    public ICommand? BrowseProgramPathCommand { get => _browseProgramPathCommand; }
 
-    public ICommand? ProcessorModeSelectedCommand { get; }
+    private readonly ICommand? _processorModeSelectedCommand;
+    public ICommand? ProcessorModeSelectedCommand { get => _processorModeSelectedCommand; }
 
     private readonly IObservable<IValidationState>? _emulatorPathIsX16emu;
 
@@ -130,7 +135,19 @@ public partial class MainWindowViewModel : ViewModelBase
         _selectEmulatorFileInteraction = new Interaction<string?, string?>();
         _selectProgramFileInteraction = new Interaction<string?, string?>();
 
-        _emulatorPathIsX16emu = this.WhenAnyValue(viewModel => viewModel.EmulatorPath).Select(emulatorPath => {
+        SetupValidations(ref _emulatorPathIsX16emu, ref _debuggerAddressIsHexadecimal);
+
+        LaunchEmulatorCommandCanExecute = this.WhenAnyValue(
+            x => x.HasErrors,
+            x => x.EmulatorPath,
+            (errors, emulatorPath) => !string.IsNullOrWhiteSpace(emulatorPath) && !errors);
+
+        SetupCommands(ref _launchEmulatorCommand, ref _browseEmulatorPathCommand, ref _browseProgramPathCommand,
+                      ref _setSelectedJoyPadCommand, ref _processorModeSelectedCommand);
+    }
+
+    private void SetupValidations(ref IObservable<IValidationState>? emulatorPathIsX16emu, ref IObservable<IValidationState>? debuggerAddressIsHexadecimal) {
+        emulatorPathIsX16emu = this.WhenAnyValue(viewModel => viewModel.EmulatorPath).Select(emulatorPath => {
             if (string.IsNullOrWhiteSpace(emulatorPath))
                 return ValidationState.Valid;
 
@@ -140,30 +157,26 @@ public partial class MainWindowViewModel : ViewModelBase
             return new ValidationState(false, "Emulator Path is not the Commander X16 Emulator");
         });
 
-        _debuggerAddressIsHexadecimal = this.WhenAnyValue(vm => vm.DebuggerAddress).Select(debuggerAddress => {
+        debuggerAddressIsHexadecimal = this.WhenAnyValue(vm => vm.DebuggerAddress).Select(debuggerAddress => {
             if (EnableDebugMode && !string.IsNullOrWhiteSpace(debuggerAddress) && !debuggerAddress.All(char.IsAsciiHexDigit))
                 return new ValidationState(false, "Invalid Hex Address");
 
             return ValidationState.Valid;
         });
 
-        this.ValidationRule(viewModel => viewModel.EmulatorPath, _emulatorPathIsX16emu);
-        this.ValidationRule(viewModel => viewModel.DebuggerAddress, _debuggerAddressIsHexadecimal);
+        this.ValidationRule(viewModel => viewModel.EmulatorPath, emulatorPathIsX16emu!);
+        this.ValidationRule(viewModel => viewModel.DebuggerAddress, debuggerAddressIsHexadecimal!);
+    }
 
-        LaunchEmulatorCommandCanExecute = this.WhenAnyValue(
-            x => x.HasErrors,
-            x => x.EmulatorPath,
-            (errors, emulatorPath) => !string.IsNullOrWhiteSpace(emulatorPath) && !errors);
+    private void SetupCommands(ref ICommand? launchEmulatorCommand, ref ICommand? browseEmulatorPathCommand,
+        ref ICommand? browseProgramPathCommand, ref ICommand? setSelectedJoyPadCommand,
+        ref ICommand? processorModeSelectedCommand) {
 
-        LaunchEmulatorCommand = ReactiveCommand.Create(LaunchEmulatorCommandExecute, LaunchEmulatorCommandCanExecute);
-
-        BrowseEmulatorPathCommand = ReactiveCommand.CreateFromTask(BrowseEmulatorPathCommandExecute);
-
-        BrowseProgramPathCommand = ReactiveCommand.CreateFromTask(BrowseProgramPathCommandExecute);
-
-        SetSelectedJoyPadCommand = ReactiveCommand.Create<int>(SetSelectedJoyPadCommandExecute);
-
-        ProcessorModeSelectedCommand = ReactiveCommand.Create<string>(ProcessorModeSelectedCommandExecute);
+        launchEmulatorCommand = ReactiveCommand.Create(LaunchEmulatorCommandExecute, LaunchEmulatorCommandCanExecute);
+        browseEmulatorPathCommand = ReactiveCommand.CreateFromTask(BrowseEmulatorPathCommandExecute);
+        browseProgramPathCommand = ReactiveCommand.CreateFromTask(BrowseProgramPathCommandExecute);
+        setSelectedJoyPadCommand = ReactiveCommand.Create<int>(SetSelectedJoyPadCommandExecute);
+        processorModeSelectedCommand = ReactiveCommand.Create<string>(ProcessorModeSelectedCommandExecute);
     }
 
     // Perhaps use Tag to deactivate radio button if clicked while already selected
