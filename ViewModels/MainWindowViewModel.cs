@@ -86,6 +86,29 @@ public partial class MainWindowViewModel : ViewModelBase
         }
     }
 
+    private string _processorModeSelected = "65c02";
+    public string ProccessorModeSelected {
+        get => _processorModeSelected;
+        set {
+            this.RaiseAndSetIfChanged(ref _processorModeSelected, value);
+            this.RaisePropertyChanged(nameof(ProcessorMode65c02Selected));
+            this.RaisePropertyChanged(nameof(RunCommandText));
+        }
+    }
+
+    private bool _suppressRockwellWarnings;
+    public bool SuppressRockwellWarnings {
+        get => _suppressRockwellWarnings;
+        set {
+            this.RaiseAndSetIfChanged(ref _suppressRockwellWarnings, value);
+            this.RaisePropertyChanged(nameof(RunCommandText));
+        }
+    }
+
+    public bool ProcessorMode65c02Selected {
+        get => ProccessorModeSelected.Equals("65c02", StringComparison.InvariantCultureIgnoreCase);
+    }            
+
     public ICommand? SetSelectedJoyPadCommand { get; }
 
     public ICommand? LaunchEmulatorCommand { get; }
@@ -94,11 +117,13 @@ public partial class MainWindowViewModel : ViewModelBase
 
     public ICommand? BrowseProgramPathCommand { get; }
 
+    public ICommand? ProcessorModeSelectedCommand { get; }
+
     private readonly IObservable<IValidationState>? _emulatorPathIsX16emu;
 
-    private readonly IObservable<bool>? LaunchEmulatorCommandCanExecute;
-
     private readonly IObservable<IValidationState>? _debuggerAddressIsHexadecimal;
+
+    private readonly IObservable<bool>? LaunchEmulatorCommandCanExecute;
 
     public MainWindowViewModel()
     {
@@ -137,10 +162,14 @@ public partial class MainWindowViewModel : ViewModelBase
         BrowseProgramPathCommand = ReactiveCommand.CreateFromTask(BrowseProgramPathCommandExecute);
 
         SetSelectedJoyPadCommand = ReactiveCommand.Create<int>(SetSelectedJoyPadCommandExecute);
+
+        ProcessorModeSelectedCommand = ReactiveCommand.Create<string>(ProcessorModeSelectedCommandExecute);
     }
 
     // Perhaps use Tag to deactivate radio button if clicked while already selected
     private void SetSelectedJoyPadCommandExecute(int selectedJoyPad) => JoyPadSelected = selectedJoyPad;
+
+    private void ProcessorModeSelectedCommandExecute(string processorMode) => ProccessorModeSelected = processorMode;
 
     private void LaunchEmulatorCommandExecute() {
         FrozenSet<string> emulatorArguments = GetX16Arguments();
@@ -209,7 +238,25 @@ public partial class MainWindowViewModel : ViewModelBase
         if (JoyPadSelected > 0 && JoyPadSelected < 5)
             emulatorArguments.Add($"-joy{JoyPadSelected}");
 
+        emulatorArguments.Add(GetProcessorModeSwitch());
+
         return emulatorArguments.ToFrozenSet();
+    }
+
+    private string GetProcessorModeSwitch() {
+        string processorModeSwitch;
+
+        if (ProccessorModeSelected.Equals("65c02", StringComparison.InvariantCultureIgnoreCase))
+        {
+            processorModeSwitch = "-c02";
+
+            if (SuppressRockwellWarnings)
+                processorModeSwitch = $"{processorModeSwitch} -rockwell";
+        }
+        else
+            processorModeSwitch = "-c816";
+
+        return processorModeSwitch;
     }
 
     private async Task BrowseEmulatorPathCommandExecute() {
