@@ -59,7 +59,7 @@
                 <Grid ColumnDefinitions="*, Auto" Margin="0, 0, 0, 20">
                     <TextBox x:Name="ProgramPath"
                         Grid.Column="0"
-                        Watermark="Path to Cartridge / Program / Basic File"
+                        Watermark="Path to Cartridge / Program / Basic File (optional)"
                         TextWrapping="NoWrap"
                         AcceptsReturn="False"
                         Margin="0,0,10,0"
