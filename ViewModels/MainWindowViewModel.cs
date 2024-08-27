@@ -38,7 +38,10 @@ public partial class MainWindowViewModel : ViewModelBase
         get => _programPath;
         set {
             this.RaiseAndSetIfChanged(ref _programPath, value);
+            this.RaisePropertyChanged(nameof(ProgramPathIsEmptyOrWhitespace));
             this.RaisePropertyChanged(nameof(ProgramPathIsPRGFile));
+            this.RaisePropertyChanged(nameof(ProgramPathIsBasicFile));
+            this.RaisePropertyChanged(nameof(RunProgramAutomaticallyEnabled));
             this.RaisePropertyChanged(nameof(RunCommandText));
         } 
     }
@@ -58,6 +61,8 @@ public partial class MainWindowViewModel : ViewModelBase
             this.RaisePropertyChanged(nameof(RunCommandText));
         }
     }
+
+    public bool RunProgramAutomaticallyEnabled => (ProgramPathIsPRGFile || ProgramPathIsBasicFile) && File.Exists(ProgramPath);
 
     private bool _enableDebugMode = false;
     public bool EnableDebugMode {
@@ -106,8 +111,16 @@ public partial class MainWindowViewModel : ViewModelBase
         }
     }
 
+    public bool ProgramPathIsEmptyOrWhitespace {
+        get => string.IsNullOrWhiteSpace(ProgramPath);
+    }
+
     public bool ProgramPathIsPRGFile {
-        get => !string.IsNullOrWhiteSpace(ProgramPath) && ProgramPath.EndsWith(".prg", StringComparison.InvariantCultureIgnoreCase);
+        get => !ProgramPathIsEmptyOrWhitespace && ProgramPath.EndsWith(".prg", StringComparison.InvariantCultureIgnoreCase);
+    }
+
+    public bool ProgramPathIsBasicFile {
+        get => !ProgramPathIsEmptyOrWhitespace && (ProgramPath.EndsWith(".bas", StringComparison.InvariantCultureIgnoreCase) || ProgramPath.EndsWith(".txt", StringComparison.InvariantCultureIgnoreCase));
     }
 
     private string _prgLoadAddress = "";
@@ -244,7 +257,7 @@ public partial class MainWindowViewModel : ViewModelBase
     private FrozenSet<string> GetX16Arguments() {
         List<string> emulatorArguments = [];
 
-        if (!string.IsNullOrEmpty(ProgramPath) && File.Exists(ProgramPath)) {
+        if (!string.IsNullOrWhiteSpace(ProgramPath) && File.Exists(ProgramPath)) {
             var fileInfo = new FileInfo(ProgramPath);
             var fileExt = fileInfo.Extension;
 
@@ -272,10 +285,10 @@ public partial class MainWindowViewModel : ViewModelBase
                     emulatorArguments.Add($"-bas \"{ProgramPath}\"");
                     break;
             };
-        }
 
-        if (RunProgramAutomatically)
-            emulatorArguments.Add("-run");
+            if (RunProgramAutomatically && (ProgramPathIsPRGFile || ProgramPathIsBasicFile))
+                emulatorArguments.Add("-run");
+        }
 
         if (EnableDebugMode) {
             var debugSwitchText = "-debug";

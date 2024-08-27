@@ -110,6 +110,7 @@
                     OnContent=""
                     OffContent=""
                     IsChecked="{Binding Path=RunProgramAutomatically}"
+                    IsEnabled="{Binding Path=RunProgramAutomaticallyEnabled}"
                     Margin="0" />
             </Grid>
             
