@@ -226,7 +226,7 @@ public partial class MainWindowViewModel : ViewModelBase
                     break;
 
                 case ".crt":
-                    emulatorArguments.Add($"-crt \"{ProgramPath}\"");
+                    emulatorArguments.Add($"-cart \"{ProgramPath}\"");
                     break;
 
                 case ".txt":
