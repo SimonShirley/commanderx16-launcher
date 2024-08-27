@@ -229,6 +229,10 @@ public partial class MainWindowViewModel : ViewModelBase
                     emulatorArguments.Add($"-cart \"{ProgramPath}\"");
                     break;
 
+                case ".bin":
+                    emulatorArguments.Add($"-cartbin \"{ProgramPath}\"");
+                    break;
+
                 case ".txt":
                 case ".bas":
                     emulatorArguments.Add($"-bas \"{ProgramPath}\"");

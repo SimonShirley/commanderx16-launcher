@@ -55,7 +55,7 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
         var topLevel = GetTopLevel(this);
 
         var programFile = new FilePickerFileType("Program Files") { Patterns = ["*.prg"] };
-        var cartridgeFile = new FilePickerFileType("Cartridge Files") { Patterns = ["*.crt"] };
+        var cartridgeFile = new FilePickerFileType("Cartridge Files") { Patterns = ["*.crt", "*.bin"] };
 
         var basicFile = new FilePickerFileType("Basic Files") {
             Patterns = ["*.bas", "*.txt"],
