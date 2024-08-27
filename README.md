@@ -5,6 +5,8 @@ For more information about the Commander X16 and how to support their project, [
 
 Made in .NET 8.0, with AvaloniaUI and ReactiveUI.
 
+![build](https://github.com/SimonShirley/commanderx16-launcher/actions/workflows/dotnet.yml/badge.svg)
+
 **Please note:** This launcher probably won't support all of the known commands, so some terminal usage may be needed for more advanced use cases. The purpose of this launcher was aimed at getting the emulator up and running quickly and easily for more novice to intermediate users, especially those not comfortable in using a command-line interface.
 
 ## Special thanks
