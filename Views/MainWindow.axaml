@@ -73,46 +73,47 @@
                         Command="{Binding Path=BrowseProgramPathCommand}" />
                 </Grid>
 
-                <StackPanel Orientation="Horizontal">
+                <Grid
+                    ColumnDefinitions="*, Auto, Auto"
+                    Margin="0, 0, 0, 20">
+
                     <TextBlock
+                        Grid.Column="0"
                         Text="Memory location to load Program (.prg) file into:"
-                        Margin="0, 8, 10, 0" />
+                        Margin="0, 8, 0, 0" />
 
                     <TextBlock
-                            Text="$"
-                            VerticalAlignment="Top"
-                            Margin="0, 8, 0, 0" />
+                        Grid.Column="1"
+                        Text="$"
+                        VerticalAlignment="Top"
+                        Margin="0, 8, 0, 0" />
 
-                        <TextBox x:Name="PRGLoadAddress"
-                            IsEnabled="{Binding Path=ProgramPathIsPRGFile}"
-                            Watermark="(optional)"
-                            Margin="5, 0, 20, 0"
-                            MinWidth="150"
-                            Text="{Binding Path=PRGLoadAddress}"
-                            VerticalAlignment="Top" />
-                </StackPanel>
+                    <TextBox x:Name="PRGLoadAddress"
+                        Grid.Column="2"
+                        IsEnabled="{Binding Path=ProgramPathIsPRGFile}"
+                        Watermark="(optional)"
+                        Margin="5, 0, 0, 0"
+                        MinWidth="150"
+                        Text="{Binding Path=PRGLoadAddress}"
+                        VerticalAlignment="Top" />
+                </Grid>
+
+                <Grid ColumnDefinitions="*, Auto">
+                    <TextBlock
+                        Grid.Column="0"
+                        Text="Run Program / Basic File Automatically"
+                        Margin="0, 6, 0, 0" />
+
+                    <ToggleSwitch x:Name="RunProgram"
+                        Grid.Column="1"
+                        IsThreeState="False"
+                        OnContent=""
+                        OffContent=""
+                        IsChecked="{Binding Path=RunProgramAutomatically}"
+                        IsEnabled="{Binding Path=RunProgramAutomaticallyEnabled}"
+                        Margin="0" />
+                </Grid>
             </StackPanel>
-
-            <Separator Margin="0,0,0,20" />
-
-            <Grid
-                ColumnDefinitions="*, Auto"
-                Margin="0,0,0,20">
-
-                <TextBlock
-                    Grid.Column="0"
-                    Text="Run Program Automatically"
-                    Margin="0, 6, 0, 0" />
-
-                <ToggleSwitch x:Name="RunProgram"
-                    Grid.Column="1"
-                    IsThreeState="False"
-                    OnContent=""
-                    OffContent=""
-                    IsChecked="{Binding Path=RunProgramAutomatically}"
-                    IsEnabled="{Binding Path=RunProgramAutomaticallyEnabled}"
-                    Margin="0" />
-            </Grid>
             
             <Separator Margin="0,0,0,20" />
 
