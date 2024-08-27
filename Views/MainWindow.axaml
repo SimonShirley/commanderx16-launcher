@@ -8,7 +8,7 @@
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
         Title="Commander X16 Launcher"
-        Width="1024" Height="618"
+        Width="1024" Height="675"
         MinWidth="650">
 
     <Design.DataContext>
@@ -56,7 +56,7 @@
                     Text="Path to Cartridge / Program / Basic File:"
                     Margin="0, 0, 0, 10" />
 
-                <Grid ColumnDefinitions="*, Auto">
+                <Grid ColumnDefinitions="*, Auto" Margin="0, 0, 0, 20">
                     <TextBox x:Name="ProgramPath"
                         Grid.Column="0"
                         Watermark="Path to Cartridge / Program / Basic File"
@@ -73,6 +73,24 @@
                         Command="{Binding Path=BrowseProgramPathCommand}" />
                 </Grid>
 
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock
+                        Text="Memory location to load Program (.prg) file into:"
+                        Margin="0, 8, 10, 0" />
+
+                    <TextBlock
+                            Text="$"
+                            VerticalAlignment="Top"
+                            Margin="0, 8, 0, 0" />
+
+                        <TextBox x:Name="PRGLoadAddress"
+                            IsEnabled="{Binding Path=ProgramPathIsPRGFile}"
+                            Watermark="(optional)"
+                            Margin="5, 0, 20, 0"
+                            MinWidth="150"
+                            Text="{Binding Path=PRGLoadAddress}"
+                            VerticalAlignment="Top" />
+                </StackPanel>
             </StackPanel>
 
             <Separator Margin="0,0,0,20" />

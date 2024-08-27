@@ -38,6 +38,7 @@ public partial class MainWindowViewModel : ViewModelBase
         get => _programPath;
         set {
             this.RaiseAndSetIfChanged(ref _programPath, value);
+            this.RaisePropertyChanged(nameof(ProgramPathIsPRGFile));
             this.RaisePropertyChanged(nameof(RunCommandText));
         } 
     }
@@ -105,9 +106,22 @@ public partial class MainWindowViewModel : ViewModelBase
         }
     }
 
+    public bool ProgramPathIsPRGFile {
+        get => !string.IsNullOrWhiteSpace(ProgramPath) && ProgramPath.EndsWith(".prg", StringComparison.InvariantCultureIgnoreCase);
+    }
+
+    private string _prgLoadAddress = "";
+    public string PRGLoadAddress {
+        get => _prgLoadAddress;
+        set {
+            this.RaiseAndSetIfChanged(ref _prgLoadAddress, value);
+            this.RaisePropertyChanged(nameof(RunCommandText));
+        }
+    }
+
     public bool ProcessorMode65c02Selected {
         get => ProccessorModeSelected.Equals("65c02", StringComparison.InvariantCultureIgnoreCase);
-    }            
+    }
 
     private readonly ICommand? _setSelectedJoyPadCommand;
     public ICommand? SetSelectedJoyPadCommand { get => _setSelectedJoyPadCommand; }
@@ -128,6 +142,8 @@ public partial class MainWindowViewModel : ViewModelBase
 
     private readonly IObservable<IValidationState>? _debuggerAddressIsHexadecimal;
 
+    private readonly IObservable<IValidationState>? _prgLoadAddressIsHexadecimal;
+
     private readonly IObservable<bool>? LaunchEmulatorCommandCanExecute;
 
     public MainWindowViewModel()
@@ -135,7 +151,7 @@ public partial class MainWindowViewModel : ViewModelBase
         _selectEmulatorFileInteraction = new Interaction<string?, string?>();
         _selectProgramFileInteraction = new Interaction<string?, string?>();
 
-        SetupValidations(ref _emulatorPathIsX16emu, ref _debuggerAddressIsHexadecimal);
+        SetupValidations(ref _emulatorPathIsX16emu, ref _debuggerAddressIsHexadecimal, ref _prgLoadAddressIsHexadecimal);
 
         LaunchEmulatorCommandCanExecute = this.WhenAnyValue(
             x => x.HasErrors,
@@ -146,7 +162,11 @@ public partial class MainWindowViewModel : ViewModelBase
                       ref _setSelectedJoyPadCommand, ref _processorModeSelectedCommand);
     }
 
-    private void SetupValidations(ref IObservable<IValidationState>? emulatorPathIsX16emu, ref IObservable<IValidationState>? debuggerAddressIsHexadecimal) {
+    private void SetupValidations(
+            ref IObservable<IValidationState>? emulatorPathIsX16emu,
+            ref IObservable<IValidationState>? debuggerAddressIsHexadecimal,
+            ref IObservable<IValidationState>? prgLoadAddressIsHexadecimal) {
+
         emulatorPathIsX16emu = this.WhenAnyValue(viewModel => viewModel.EmulatorPath).Select(emulatorPath => {
             if (string.IsNullOrWhiteSpace(emulatorPath))
                 return ValidationState.Valid;
@@ -164,8 +184,16 @@ public partial class MainWindowViewModel : ViewModelBase
             return ValidationState.Valid;
         });
 
+        prgLoadAddressIsHexadecimal = this.WhenAnyValue(vm => vm.PRGLoadAddress).Select(prgLoadAddress => {
+            if (ProgramPathIsPRGFile && !string.IsNullOrWhiteSpace(prgLoadAddress) && !prgLoadAddress.All(char.IsAsciiHexDigit))
+                return new ValidationState(false, "Invalid Hex Address");
+
+            return ValidationState.Valid;
+        });
+
         this.ValidationRule(viewModel => viewModel.EmulatorPath, emulatorPathIsX16emu!);
         this.ValidationRule(viewModel => viewModel.DebuggerAddress, debuggerAddressIsHexadecimal!);
+        this.ValidationRule(viewModel => viewModel.PRGLoadAddress, prgLoadAddressIsHexadecimal!);
     }
 
     private void SetupCommands(ref ICommand? launchEmulatorCommand, ref ICommand? browseEmulatorPathCommand,
@@ -222,7 +250,13 @@ public partial class MainWindowViewModel : ViewModelBase
 
             switch (fileExt) {
                 case ".prg":
-                    emulatorArguments.Add($"-prg \"{ProgramPath}\"");
+                    var prgArgument = $"-prg \"{ProgramPath}\"";
+
+                    if (!string.IsNullOrWhiteSpace(PRGLoadAddress))
+                        prgArgument = $"{prgArgument},{PRGLoadAddress}";
+
+                    emulatorArguments.Add(prgArgument);
+
                     break;
 
                 case ".crt":
