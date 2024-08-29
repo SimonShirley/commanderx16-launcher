@@ -1,4 +1,8 @@
-﻿using System;
+﻿using AsyncAwaitBestPractices;
+using ReactiveUI;
+using ReactiveUI.Validation.Extensions;
+using ReactiveUI.Validation.States;
+using System;
 using System.Collections.Frozen;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -8,10 +12,6 @@ using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using AsyncAwaitBestPractices;
-using ReactiveUI;
-using ReactiveUI.Validation.Extensions;
-using ReactiveUI.Validation.States;
 
 namespace CommanderX16Launcher.ViewModels;
 
@@ -175,12 +175,14 @@ public partial class MainWindowViewModel : ViewModelBase
                       ref _setSelectedJoyPadCommand, ref _processorModeSelectedCommand);
     }
 
+    #region "Validations"
+
     private void SetupValidations(
             ref IObservable<IValidationState>? emulatorPathIsX16emu,
             ref IObservable<IValidationState>? debuggerAddressIsHexadecimal,
             ref IObservable<IValidationState>? prgLoadAddressIsHexadecimal) {
 
-        emulatorPathIsX16emu = this.WhenAnyValue(viewModel => viewModel.EmulatorPath).Select(emulatorPath => {
+        emulatorPathIsX16emu = this.WhenAnyValue(viewModel => viewModel.EmulatorPath, emulatorPath => {
             if (string.IsNullOrWhiteSpace(emulatorPath))
                 return ValidationState.Valid;
 
@@ -190,24 +192,31 @@ public partial class MainWindowViewModel : ViewModelBase
             return new ValidationState(false, "Emulator Path is not the Commander X16 Emulator");
         });
 
-        debuggerAddressIsHexadecimal = this.WhenAnyValue(vm => vm.DebuggerAddress).Select(debuggerAddress => {
-            if (EnableDebugMode && !string.IsNullOrWhiteSpace(debuggerAddress) && !debuggerAddress.All(char.IsAsciiHexDigit))
-                return new ValidationState(false, "Invalid Hex Address");
-
-            return ValidationState.Valid;
-        });
-
-        prgLoadAddressIsHexadecimal = this.WhenAnyValue(vm => vm.PRGLoadAddress).Select(prgLoadAddress => {
-            if (ProgramPathIsPRGFile && !string.IsNullOrWhiteSpace(prgLoadAddress) && !prgLoadAddress.All(char.IsAsciiHexDigit))
-                return new ValidationState(false, "Invalid Hex Address");
-
-            return ValidationState.Valid;
-        });
+        debuggerAddressIsHexadecimal = this.WhenAnyValue(vm => vm.DebuggerAddress, vm => vm.EnableDebugMode, HexadecimalTextValidation);
+        prgLoadAddressIsHexadecimal = this.WhenAnyValue(vm => vm.PRGLoadAddress, vm => vm.ProgramPathIsPRGFile, HexadecimalTextValidation);
 
         this.ValidationRule(viewModel => viewModel.EmulatorPath, emulatorPathIsX16emu!);
         this.ValidationRule(viewModel => viewModel.DebuggerAddress, debuggerAddressIsHexadecimal!);
         this.ValidationRule(viewModel => viewModel.PRGLoadAddress, prgLoadAddressIsHexadecimal!);
     }
+
+    private static IValidationState HexadecimalTextValidation(string text, bool validationEnabled = false)
+    {
+        if (!validationEnabled)
+            return ValidationState.Valid;
+
+        return HexadecimalTextValidation(text);
+    }
+
+    private static IValidationState HexadecimalTextValidation(string text)
+    {
+        if (!string.IsNullOrWhiteSpace(text) && !text.All(char.IsAsciiHexDigit))
+            return new ValidationState(false, "Invalid Hex Address");
+
+        return ValidationState.Valid;
+    }
+
+    #endregion
 
     private void SetupCommands(ref ICommand? launchEmulatorCommand, ref ICommand? browseEmulatorPathCommand,
         ref ICommand? browseProgramPathCommand, ref ICommand? setSelectedJoyPadCommand,
