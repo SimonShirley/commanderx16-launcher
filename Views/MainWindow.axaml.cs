@@ -34,13 +34,16 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
             MimeTypes = ["application/vnd.microsoft.portable-executable", "application/octet-stream"]
         };
 
+        if (OperatingSystem.IsWindows())
+            emulatorFile.Patterns = ["*.exe"];
+
         FilePickerOpenOptions filePickerOptions = new () {
             AllowMultiple = false,
             Title = context.Input,
             FileTypeFilter = [ emulatorFile, FilePickerFileTypes.All ],
             SuggestedFileName = "x16emu"
         };
-
+        
         if (OperatingSystem.IsWindows())
             filePickerOptions.SuggestedFileName = "x16emu.exe";
         
