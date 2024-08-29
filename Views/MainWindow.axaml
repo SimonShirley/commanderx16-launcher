@@ -127,51 +127,16 @@
                     Margin="0, 0, 10, 0"
                     VerticalAlignment="Center" />
 
-                <WrapPanel Grid.Column="1">
-                    <RadioButton                    
-                        GroupName="Joypad"
-                        Content="Port 1"
-                        IsThreeState="False"
-                        Command="{Binding Path=SetSelectedJoyPadCommand}"
-                        Margin="0, 0, 10, 0">
-                        <RadioButton.CommandParameter>
-                            <x:Int32>1</x:Int32>
-                        </RadioButton.CommandParameter>
-                    </RadioButton>
+                <ComboBox
+                    Grid.Column="1"
+                    SelectedIndex="{Binding Path=JoyPadSelected}">
 
-                    <RadioButton
-                        GroupName="Joypad"
-                        Content="Port 2"
-                        IsThreeState="False"
-                        Command="{Binding Path=SetSelectedJoyPadCommand}"
-                        Margin="0, 0, 10, 0">
-                        <RadioButton.CommandParameter>
-                            <x:Int32>2</x:Int32>
-                        </RadioButton.CommandParameter>
-                    </RadioButton>
-
-                    <RadioButton
-                        GroupName="Joypad"
-                        Content="Port 3"
-                        IsThreeState="False"
-                        Command="{Binding Path=SetSelectedJoyPadCommand}"
-                        Margin="0, 0, 10, 0">
-                        <RadioButton.CommandParameter>
-                            <x:Int32>3</x:Int32>
-                        </RadioButton.CommandParameter>
-                    </RadioButton>
-
-                    <RadioButton
-                        GroupName="Joypad"
-                        Content="Port 4"
-                        IsThreeState="False"
-                        Command="{Binding Path=SetSelectedJoyPadCommand}"
-                        Margin="0, 0, 10, 0">
-                        <RadioButton.CommandParameter>
-                            <x:Int32>4</x:Int32>
-                        </RadioButton.CommandParameter>
-                    </RadioButton>
-                </WrapPanel>
+                    <ComboBoxItem>No JoyPad</ComboBoxItem>
+                    <ComboBoxItem>JoyPad 1</ComboBoxItem>
+                    <ComboBoxItem>JoyPad 2</ComboBoxItem>
+                    <ComboBoxItem>JoyPad 3</ComboBoxItem>
+                    <ComboBoxItem>JoyPad 4</ComboBoxItem>
+                </ComboBox>
             </Grid>
 
             <Separator Margin="0,0,0,20" />

@@ -91,7 +91,7 @@ public partial class MainWindowViewModel : ViewModelBase
     private int _joyPadSelected = 0;
     public int JoyPadSelected {
         get => _joyPadSelected;
-        private set {
+        set {
             this.RaiseAndSetIfChanged(ref _joyPadSelected, value);
             this.RaisePropertyChanged(nameof(RunCommandText));
         }
@@ -144,9 +144,6 @@ public partial class MainWindowViewModel : ViewModelBase
         get => ProccessorModeSelected?.Equals("65c02", StringComparison.InvariantCultureIgnoreCase) ?? false;
     }
 
-    private readonly ICommand? _setSelectedJoyPadCommand;
-    public ICommand? SetSelectedJoyPadCommand { get => _setSelectedJoyPadCommand; }
-
     private readonly ICommand? _launchEmulatorCommand;
     public ICommand? LaunchEmulatorCommand { get => _launchEmulatorCommand; }
 
@@ -167,7 +164,7 @@ public partial class MainWindowViewModel : ViewModelBase
         SetupValidations();
 
         SetupCommands(ref _launchEmulatorCommand, ref _browseEmulatorPathCommand, ref _browseProgramPathCommand,
-                      ref _setSelectedJoyPadCommand, ref _processorModeSelectedCommand);
+                      ref _processorModeSelectedCommand);
     }
 
     #region "Validations"
@@ -189,7 +186,7 @@ public partial class MainWindowViewModel : ViewModelBase
     #endregion
 
     private void SetupCommands(ref ICommand? launchEmulatorCommand, ref ICommand? browseEmulatorPathCommand,
-        ref ICommand? browseProgramPathCommand, ref ICommand? setSelectedJoyPadCommand,
+        ref ICommand? browseProgramPathCommand,
         ref ICommand? processorModeSelectedCommand) {
 
         launchEmulatorCommand = ReactiveCommand.Create(
@@ -198,12 +195,8 @@ public partial class MainWindowViewModel : ViewModelBase
 
         browseEmulatorPathCommand = ReactiveCommand.CreateFromTask(BrowseEmulatorPathCommandExecute);
         browseProgramPathCommand = ReactiveCommand.CreateFromTask(BrowseProgramPathCommandExecute);
-        setSelectedJoyPadCommand = ReactiveCommand.Create<int>(SetSelectedJoyPadCommandExecute);
         processorModeSelectedCommand = ReactiveCommand.Create<string>(ProcessorModeSelectedCommandExecute);
     }
-
-    // Perhaps use Tag to deactivate radio button if clicked while already selected
-    private void SetSelectedJoyPadCommandExecute(int selectedJoyPad) => JoyPadSelected = selectedJoyPad;
 
     private void ProcessorModeSelectedCommandExecute(string processorMode) => ProccessorModeSelected = processorMode;
 
