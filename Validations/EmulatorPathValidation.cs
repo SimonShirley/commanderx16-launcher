@@ -5,9 +5,12 @@ namespace CommanderX16Launcher.Validations
 {
     public class EmulatorPathValidation
     {
-        public static IValidationState Validate(string emulatorPath)
+        public static IValidationState ValidateEmpty(string emulatorPath) => Validate(emulatorPath, true);
+        public static IValidationState Validate(string emulatorPath) => Validate(emulatorPath, false);
+
+        private static IValidationState Validate(string emulatorPath, bool canBeEmpty)
         {
-            if (string.IsNullOrWhiteSpace(emulatorPath))
+            if (canBeEmpty && string.IsNullOrWhiteSpace(emulatorPath))
                 return ValidationState.Valid;
 
             if (File.Exists(emulatorPath) && (emulatorPath.EndsWith("x16emu") || emulatorPath.EndsWith("x16emu.exe")))

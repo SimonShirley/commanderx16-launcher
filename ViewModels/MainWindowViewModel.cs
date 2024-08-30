@@ -2,6 +2,7 @@
 using CommanderX16Launcher.Validations;
 using ReactiveUI;
 using ReactiveUI.Validation.Extensions;
+using ReactiveUI.Validation.States;
 using System;
 using System.Collections.Frozen;
 using System.Collections.Generic;
@@ -47,9 +48,13 @@ public partial class MainWindowViewModel : ViewModelBase
     }
 
     public string RunCommandText {
-        get {
-            FrozenSet<string> emulatorArguments = GetX16Arguments();
-            return string.IsNullOrWhiteSpace(EmulatorPath) ? "Command to Run" : GetCommandString(EmulatorPath, emulatorArguments);
+        get
+        {
+            if (EmulatorPathValidation.Validate(EmulatorPath) != ValidationState.Valid)
+                return "Command to Run";
+
+            var emulatorArguments = GetX16Arguments();
+            return GetCommandString(EmulatorPath, emulatorArguments);
         }
     }
 
@@ -163,7 +168,7 @@ public partial class MainWindowViewModel : ViewModelBase
         LaunchEmulatorCommandCanExecute = this.WhenAnyValue(
             x => x.HasErrors,
             x => x.EmulatorPath,
-            (errors, emulatorPath) => !string.IsNullOrWhiteSpace(emulatorPath) && !errors);
+            (errors, emulatorPath) => EmulatorPathValidation.Validate(emulatorPath) == ValidationState.Valid && !errors);
 
         SetupCommands(ref _launchEmulatorCommand, ref _browseEmulatorPathCommand, ref _browseProgramPathCommand,
                       ref _setSelectedJoyPadCommand, ref _processorModeSelectedCommand);
@@ -174,7 +179,7 @@ public partial class MainWindowViewModel : ViewModelBase
     private void SetupValidations() {
         this.ValidationRule(
             viewModel => viewModel.EmulatorPath,
-            this.WhenAnyValue(viewModel => viewModel.EmulatorPath, EmulatorPathValidation.Validate));
+            this.WhenAnyValue(viewModel => viewModel.EmulatorPath, EmulatorPathValidation.ValidateEmpty));
 
         this.ValidationRule(
             viewModel => viewModel.DebuggerAddress,
@@ -205,7 +210,7 @@ public partial class MainWindowViewModel : ViewModelBase
 
     private void LaunchEmulatorCommandExecute() {
         FrozenSet<string> emulatorArguments = GetX16Arguments();
-        StartEmulator(EmulatorPath, emulatorArguments).SafeFireAndForget(onException: ex => Debug.WriteLine(ex));            
+        StartEmulator(EmulatorPath, emulatorArguments).SafeFireAndForget(onException: ex => Debug.WriteLine(ex));
     }
 
     private static async Task StartEmulator(string emulatorPath, IEnumerable<string> args) {
