@@ -17,209 +17,213 @@
         <vm:MainWindowViewModel/>
     </Design.DataContext>
 
-    <ScrollViewer>
-        <StackPanel Orientation="Vertical" Margin="30">
-            <StackPanel
-                Orientation="Vertical"
-                Margin="0, 0, 0, 20">
+    <DockPanel LastChildFill="True">
+        <StackPanel
+            DockPanel.Dock="Bottom"
+            Margin="30, 0, 30, 30">
 
-                <TextBlock
-                    Text="Path to Commander X16 Emulator:"
-                    Margin="0, 0, 0, 10" />
+            <ScrollViewer Margin="0, 0, 0, 20">
+                <TextBlock                    
+                    HorizontalAlignment="Left"
+                    Text="{Binding Path=RunCommandText, Mode=OneWay}" />
+            </ScrollViewer>
 
-                <Grid ColumnDefinitions="*, Auto">
-                    <TextBox x:Name="EmulatorPath"
-                        Grid.Column="0"
-                        Watermark="Path to x16emu Emulator"
-                        TextWrapping="NoWrap"
-                        AcceptsReturn="False"
-                        Margin="0,0,10,0"
-                        VerticalAlignment="Top"
-                        Text="{Binding Path=EmulatorPath}" />
-
-                    <Button x:Name="BrowseEmulatorPath"
-                        Grid.Column="1"
-                        Content="Browse..."
-                        HorizontalAlignment="Right"
-                        VerticalAlignment="Top"
-                        Command="{Binding Path=BrowseEmulatorPathCommand}" />
-                </Grid>
-            </StackPanel>
-
-            <Separator Margin="0, 0, 0, 20" />
-
-            <StackPanel
-                Orientation="Vertical"
-                Margin="0, 0, 0, 20">
-
-                <TextBlock
-                    Text="Path to Cartridge / Program / Basic File:"
-                    Margin="0, 0, 0, 10" />
-
-                <Grid ColumnDefinitions="*, Auto" Margin="0, 0, 0, 20">
-                    <TextBox x:Name="ProgramPath"
-                        Grid.Column="0"
-                        Watermark="Path to Cartridge / Program / Basic File (optional)"
-                        TextWrapping="NoWrap"
-                        AcceptsReturn="False"
-                        Margin="0,0,10,0"
-                        VerticalAlignment="Top"
-                        Text="{Binding Path=ProgramPath}"/>
-
-                    <Button x:Name="BrowseProgramPath"
-                        Grid.Column="1"
-                        Content="Browse..."
-                        VerticalAlignment="Top"
-                        Command="{Binding Path=BrowseProgramPathCommand}" />
-                </Grid>
-
-                <Grid
-                    ColumnDefinitions="*, Auto, Auto"
+            <Button x:Name="LaunchEmulator"
+                Content="Launch Emulator"
+                VerticalAlignment="Bottom"
+                HorizontalAlignment="Right"
+                Command="{Binding Path=LaunchEmulatorCommand}" />
+        </StackPanel>
+        <ScrollViewer>
+            <StackPanel Orientation="Vertical" Margin="30">
+                <StackPanel
+                    Orientation="Vertical"
                     Margin="0, 0, 0, 20">
 
                     <TextBlock
-                        Grid.Column="0"
-                        Text="Memory location to load Program (.prg) file into:"
-                        Margin="0, 8, 0, 0" />
+                        Text="Path to Commander X16 Emulator:"
+                        Margin="0, 0, 0, 10" />
+
+                    <Grid ColumnDefinitions="*, Auto">
+                        <TextBox x:Name="EmulatorPath"
+                            Grid.Column="0"
+                            Watermark="Path to x16emu Emulator"
+                            TextWrapping="NoWrap"
+                            AcceptsReturn="False"
+                            Margin="0,0,10,0"
+                            VerticalAlignment="Top"
+                            Text="{Binding Path=EmulatorPath}" />
+
+                        <Button x:Name="BrowseEmulatorPath"
+                            Grid.Column="1"
+                            Content="Browse..."
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Top"
+                            Command="{Binding Path=BrowseEmulatorPathCommand}" />
+                    </Grid>
+                </StackPanel>
+
+                <Separator Margin="0, 0, 0, 20" />
+
+                <StackPanel
+                    Orientation="Vertical"
+                    Margin="0, 0, 0, 20">
 
                     <TextBlock
-                        Grid.Column="1"
-                        Text="$"
-                        VerticalAlignment="Top"
-                        Margin="0, 8, 0, 0" />
+                        Text="Path to Cartridge / Program / Basic File:"
+                        Margin="0, 0, 0, 10" />
 
-                    <TextBox x:Name="PRGLoadAddress"
-                        Grid.Column="2"
-                        IsEnabled="{Binding Path=ProgramPathIsPRGFile}"
-                        Watermark="(optional)"
-                        Margin="5, 0, 0, 0"
-                        MinWidth="150"
-                        Text="{Binding Path=PRGLoadAddress}"
-                        VerticalAlignment="Top" />
+                    <Grid ColumnDefinitions="*, Auto" Margin="0, 0, 0, 20">
+                        <TextBox x:Name="ProgramPath"
+                            Grid.Column="0"
+                            Watermark="Path to Cartridge / Program / Basic File (optional)"
+                            TextWrapping="NoWrap"
+                            AcceptsReturn="False"
+                            Margin="0,0,10,0"
+                            VerticalAlignment="Top"
+                            Text="{Binding Path=ProgramPath}"/>
+
+                        <Button x:Name="BrowseProgramPath"
+                            Grid.Column="1"
+                            Content="Browse..."
+                            VerticalAlignment="Top"
+                            Command="{Binding Path=BrowseProgramPathCommand}" />
+                    </Grid>
+
+                    <Grid
+                        ColumnDefinitions="*, Auto, Auto"
+                        Margin="0, 0, 0, 20">
+
+                        <TextBlock
+                            Grid.Column="0"
+                            Text="Memory location to load Program (.prg) file into:"
+                            Margin="0, 8, 0, 0" />
+
+                        <TextBlock
+                            Grid.Column="1"
+                            Text="$"
+                            VerticalAlignment="Top"
+                            Margin="0, 8, 0, 0" />
+
+                        <TextBox x:Name="PRGLoadAddress"
+                            Grid.Column="2"
+                            IsEnabled="{Binding Path=ProgramPathIsPRGFile}"
+                            Watermark="(optional)"
+                            Margin="5, 0, 0, 0"
+                            MinWidth="150"
+                            Text="{Binding Path=PRGLoadAddress}"
+                            VerticalAlignment="Top" />
+                    </Grid>
+
+                    <Grid ColumnDefinitions="*, Auto">
+                        <TextBlock
+                            Grid.Column="0"
+                            Text="Run Program / Basic File Automatically"
+                            Margin="0, 6, 0, 0" />
+
+                        <ToggleSwitch x:Name="RunProgram"
+                            Grid.Column="1"
+                            IsThreeState="False"
+                            OnContent=""
+                            OffContent=""
+                            IsChecked="{Binding Path=RunProgramAutomatically}"
+                            IsEnabled="{Binding Path=RunProgramAutomaticallyEnabled}"
+                            Margin="0" />
+                    </Grid>
+                </StackPanel>
+                
+                <Separator Margin="0,0,0,20" />
+
+                <Grid
+                    ColumnDefinitions="*, Auto"
+                    Margin="0, 0, 0, 20">
+                    
+                    <TextBlock
+                        Grid.Column="0"
+                        Text="Controller Setup:"
+                        Margin="0, 0, 10, 0"
+                        VerticalAlignment="Center" />
+
+                    <ComboBox
+                        Grid.Column="1"
+                        SelectedIndex="{Binding Path=JoyPadSelected}">
+
+                        <ComboBoxItem>No JoyPad</ComboBoxItem>
+                        <ComboBoxItem>JoyPad 1</ComboBoxItem>
+                        <ComboBoxItem>JoyPad 2</ComboBoxItem>
+                        <ComboBoxItem>JoyPad 3</ComboBoxItem>
+                        <ComboBoxItem>JoyPad 4</ComboBoxItem>
+                    </ComboBox>
                 </Grid>
 
-                <Grid ColumnDefinitions="*, Auto">
+                <Separator Margin="0,0,0,20" />
+
+                <Grid ColumnDefinitions="*, Auto, Auto" Margin="0, 0, 0, 20">				
                     <TextBlock
                         Grid.Column="0"
-                        Text="Run Program / Basic File Automatically"
-                        Margin="0, 6, 0, 0" />
+                        Text="Processor Mode"
+                        VerticalAlignment="Top"
+                        Margin="0, 8, 20, 0" />
 
-                    <ToggleSwitch x:Name="RunProgram"
+                    <CheckBox
                         Grid.Column="1"
+                        Content="Suppress Rockwell Warnings (65c02 only)"
+                        VerticalAlignment="Top"
+                        HorizontalAlignment="Right"
+                        IsEnabled="{Binding Path=ProcessorMode65c02Selected, Mode=OneWay}"
+                        IsChecked="{Binding Path=SuppressRockwellWarnings}"
+                        Margin="0, 0, 20, 0" />
+                    
+                    <ComboBox
+                        Grid.Column="2" Grid.Row="0 "
+                        ItemsSource="{Binding Path=ProcessorModes}"
+                        SelectedValue="{Binding Path=ProccessorModeSelected}" />
+                </Grid>
+
+                <Separator Margin="0,0,0,20" />
+
+                <Grid ColumnDefinitions="Auto, *, Auto" Margin="0, 0, 0, 20">
+                    <TextBlock
+                        Grid.Column="0"
+                        Text="Enable Debugger"
+                        VerticalAlignment="Top"
+                        Margin="0, 8, 20, 0" />
+
+                    <WrapPanel
+                        Grid.Column="1"
+                        HorizontalAlignment="Right">
+                        
+                        <TextBlock
+                            Text="Set an optional breakpoint:"
+                            Margin="0, 8, 20, 0"
+                            VerticalAlignment="Top"/>
+
+                        <TextBlock
+                            Text="$"
+                            VerticalAlignment="Top"
+                            Margin="0, 8, 0, 0" />
+
+                        <TextBox x:Name="DebuggerAddress"
+                            IsEnabled="{Binding Path=EnableDebugMode}"
+                            Watermark="(optional)"
+                            Margin="5, 0, 20, 0"
+                            MinWidth="150"
+                            Text="{Binding Path=DebuggerAddress}"
+                            VerticalAlignment="Top" />
+                    </WrapPanel>
+
+                    <ToggleSwitch x:Name="EnableDebugger"  
+                        Grid.Column="2"              	
                         IsThreeState="False"
                         OnContent=""
                         OffContent=""
-                        IsChecked="{Binding Path=RunProgramAutomatically}"
-                        IsEnabled="{Binding Path=RunProgramAutomaticallyEnabled}"
+                        IsChecked="{Binding Path=EnableDebugMode}"
+                        VerticalAlignment="Top"
                         Margin="0" />
                 </Grid>
+
+                <Separator Margin="0" />
             </StackPanel>
-            
-            <Separator Margin="0,0,0,20" />
-
-            <Grid
-                ColumnDefinitions="*, Auto"
-                Margin="0, 0, 0, 20">
-                
-                <TextBlock
-                    Grid.Column="0"
-                    Text="Controller Setup:"
-                    Margin="0, 0, 10, 0"
-                    VerticalAlignment="Center" />
-
-                <ComboBox
-                    Grid.Column="1"
-                    SelectedIndex="{Binding Path=JoyPadSelected}">
-
-                    <ComboBoxItem>No JoyPad</ComboBoxItem>
-                    <ComboBoxItem>JoyPad 1</ComboBoxItem>
-                    <ComboBoxItem>JoyPad 2</ComboBoxItem>
-                    <ComboBoxItem>JoyPad 3</ComboBoxItem>
-                    <ComboBoxItem>JoyPad 4</ComboBoxItem>
-                </ComboBox>
-            </Grid>
-
-            <Separator Margin="0,0,0,20" />
-
-            <Grid ColumnDefinitions="*, Auto, Auto" Margin="0, 0, 0, 20">				
-                <TextBlock
-                    Grid.Column="0"
-                    Text="Processor Mode"
-                    VerticalAlignment="Top"
-                    Margin="0, 8, 20, 0" />
-
-				<CheckBox
-                    Grid.Column="1"
-                    Content="Suppress Rockwell Warnings (65c02 only)"
-                    VerticalAlignment="Top"
-                    HorizontalAlignment="Right"
-                    IsEnabled="{Binding Path=ProcessorMode65c02Selected, Mode=OneWay}"
-                    IsChecked="{Binding Path=SuppressRockwellWarnings}"
-                    Margin="0, 0, 20, 0" />
-				
-				<ComboBox
-					Grid.Column="2" Grid.Row="0 "
-					ItemsSource="{Binding Path=ProcessorModes}"
-					SelectedValue="{Binding Path=ProccessorModeSelected}" />
-            </Grid>
-
-            <Separator Margin="0,0,0,20" />
-
-            <Grid ColumnDefinitions="Auto, *, Auto" Margin="0, 0, 0, 20">
-                <TextBlock
-                    Grid.Column="0"
-                    Text="Enable Debugger"
-                    VerticalAlignment="Top"
-                    Margin="0, 8, 20, 0" />
-
-                <WrapPanel
-                    Grid.Column="1"
-                    HorizontalAlignment="Right">
-                    
-                    <TextBlock
-                        Text="Set an optional breakpoint:"
-                        Margin="0, 8, 20, 0"
-                        VerticalAlignment="Top"/>
-
-                    <TextBlock
-                        Text="$"
-                        VerticalAlignment="Top"
-                        Margin="0, 8, 0, 0" />
-
-                    <TextBox x:Name="DebuggerAddress"
-                        IsEnabled="{Binding Path=EnableDebugMode}"
-                        Watermark="(optional)"
-                        Margin="5, 0, 20, 0"
-                        MinWidth="150"
-                        Text="{Binding Path=DebuggerAddress}"
-                        VerticalAlignment="Top" />
-                </WrapPanel>
-
-                <ToggleSwitch x:Name="EnableDebugger"  
-                    Grid.Column="2"              	
-                    IsThreeState="False"
-                    OnContent=""
-                    OffContent=""
-                    IsChecked="{Binding Path=EnableDebugMode}"
-                    VerticalAlignment="Top"
-                    Margin="0, 0, 0, 0" />
-            </Grid>
-
-            <Separator Grid.Row="0" Margin="0,0,0,20" />
-
-            <StackPanel VerticalAlignment="Bottom">
-                <ScrollViewer Margin="0, 0, 0, 20">
-                    <TextBlock                    
-                        HorizontalAlignment="Left"
-                        Text="{Binding Path=RunCommandText, Mode=OneWay}" />
-                </ScrollViewer>
-
-                <Button x:Name="LaunchEmulator"
-                    Content="Launch Emulator"
-                    VerticalAlignment="Bottom"
-                    HorizontalAlignment="Right"
-                    Command="{Binding Path=LaunchEmulatorCommand}" />
-            </StackPanel>
-        </StackPanel>
-    </ScrollViewer>
+        </ScrollViewer>
+    </DockPanel>
 </Window>
