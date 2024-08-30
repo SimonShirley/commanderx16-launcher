@@ -2,7 +2,6 @@
 using CommanderX16Launcher.Validations;
 using ReactiveUI;
 using ReactiveUI.Validation.Extensions;
-using ReactiveUI.Validation.States;
 using System;
 using System.Collections.Frozen;
 using System.Collections.Generic;
@@ -152,12 +151,6 @@ public partial class MainWindowViewModel : ViewModelBase
     private readonly ICommand? _processorModeSelectedCommand;
     public ICommand? ProcessorModeSelectedCommand { get => _processorModeSelectedCommand; }
 
-    private readonly IObservable<IValidationState>? _emulatorPathIsX16emu;
-
-    private readonly IObservable<IValidationState>? _debuggerAddressIsHexadecimal;
-
-    private readonly IObservable<IValidationState>? _prgLoadAddressIsHexadecimal;
-
     private readonly IObservable<bool>? LaunchEmulatorCommandCanExecute;
 
     public MainWindowViewModel()
@@ -165,7 +158,7 @@ public partial class MainWindowViewModel : ViewModelBase
         _selectEmulatorFileInteraction = new Interaction<string?, string?>();
         _selectProgramFileInteraction = new Interaction<string?, string?>();
 
-        SetupValidations(ref _emulatorPathIsX16emu, ref _debuggerAddressIsHexadecimal, ref _prgLoadAddressIsHexadecimal);
+        SetupValidations();
 
         LaunchEmulatorCommandCanExecute = this.WhenAnyValue(
             x => x.HasErrors,
@@ -178,18 +171,18 @@ public partial class MainWindowViewModel : ViewModelBase
 
     #region "Validations"
 
-    private void SetupValidations(
-            ref IObservable<IValidationState>? emulatorPathIsX16emu,
-            ref IObservable<IValidationState>? debuggerAddressIsHexadecimal,
-            ref IObservable<IValidationState>? prgLoadAddressIsHexadecimal) {
+    private void SetupValidations() {
+        this.ValidationRule(
+            viewModel => viewModel.EmulatorPath,
+            this.WhenAnyValue(viewModel => viewModel.EmulatorPath, EmulatorPathValidation.Validate));
 
-        emulatorPathIsX16emu = this.WhenAnyValue(viewModel => viewModel.EmulatorPath, EmulatorPathValidation.Validate);
-        debuggerAddressIsHexadecimal = this.WhenAnyValue(vm => vm.DebuggerAddress, vm => vm.EnableDebugMode, HexadecimalTextValidation.Validate);
-        prgLoadAddressIsHexadecimal = this.WhenAnyValue(vm => vm.PRGLoadAddress, vm => vm.ProgramPathIsPRGFile, HexadecimalTextValidation.Validate);
+        this.ValidationRule(
+            viewModel => viewModel.DebuggerAddress,
+            this.WhenAnyValue(vm => vm.DebuggerAddress, vm => vm.EnableDebugMode, HexadecimalTextValidation.Validate));
 
-        this.ValidationRule(viewModel => viewModel.EmulatorPath, emulatorPathIsX16emu!);
-        this.ValidationRule(viewModel => viewModel.DebuggerAddress, debuggerAddressIsHexadecimal!);
-        this.ValidationRule(viewModel => viewModel.PRGLoadAddress, prgLoadAddressIsHexadecimal!);
+        this.ValidationRule(
+            viewModel => viewModel.PRGLoadAddress,
+            this.WhenAnyValue(vm => vm.PRGLoadAddress, vm => vm.ProgramPathIsPRGFile, HexadecimalTextValidation.Validate));
     }
 
     #endregion
