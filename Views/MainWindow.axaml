@@ -22,8 +22,9 @@
             DockPanel.Dock="Bottom"
             Margin="30, 0, 30, 30">
 
-            <ScrollViewer Margin="0, 0, 0, 20">
-                <TextBlock                    
+            <ScrollViewer HorizontalScrollBarVisibility="Auto">
+                <TextBlock
+                    Margin="0, 0, 0, 20"         
                     HorizontalAlignment="Left"
                     Text="{Binding Path=RunCommandText, Mode=OneWay}" />
             </ScrollViewer>
