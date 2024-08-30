@@ -1,4 +1,5 @@
 ﻿using AsyncAwaitBestPractices;
+using CommanderX16Launcher.Validations;
 using ReactiveUI;
 using ReactiveUI.Validation.Extensions;
 using ReactiveUI.Validation.States;
@@ -182,38 +183,13 @@ public partial class MainWindowViewModel : ViewModelBase
             ref IObservable<IValidationState>? debuggerAddressIsHexadecimal,
             ref IObservable<IValidationState>? prgLoadAddressIsHexadecimal) {
 
-        emulatorPathIsX16emu = this.WhenAnyValue(viewModel => viewModel.EmulatorPath, emulatorPath => {
-            if (string.IsNullOrWhiteSpace(emulatorPath))
-                return ValidationState.Valid;
-
-            if (File.Exists(EmulatorPath) && (EmulatorPath.EndsWith("x16emu") || EmulatorPath.EndsWith("x16emu.exe")))
-                return ValidationState.Valid;
-
-            return new ValidationState(false, "Emulator Path is not the Commander X16 Emulator");
-        });
-
-        debuggerAddressIsHexadecimal = this.WhenAnyValue(vm => vm.DebuggerAddress, vm => vm.EnableDebugMode, HexadecimalTextValidation);
-        prgLoadAddressIsHexadecimal = this.WhenAnyValue(vm => vm.PRGLoadAddress, vm => vm.ProgramPathIsPRGFile, HexadecimalTextValidation);
+        emulatorPathIsX16emu = this.WhenAnyValue(viewModel => viewModel.EmulatorPath, EmulatorPathValidation.Validate);
+        debuggerAddressIsHexadecimal = this.WhenAnyValue(vm => vm.DebuggerAddress, vm => vm.EnableDebugMode, HexadecimalTextValidation.Validate);
+        prgLoadAddressIsHexadecimal = this.WhenAnyValue(vm => vm.PRGLoadAddress, vm => vm.ProgramPathIsPRGFile, HexadecimalTextValidation.Validate);
 
         this.ValidationRule(viewModel => viewModel.EmulatorPath, emulatorPathIsX16emu!);
         this.ValidationRule(viewModel => viewModel.DebuggerAddress, debuggerAddressIsHexadecimal!);
         this.ValidationRule(viewModel => viewModel.PRGLoadAddress, prgLoadAddressIsHexadecimal!);
-    }
-
-    private static IValidationState HexadecimalTextValidation(string text, bool validationEnabled = false)
-    {
-        if (!validationEnabled)
-            return ValidationState.Valid;
-
-        return HexadecimalTextValidation(text);
-    }
-
-    private static IValidationState HexadecimalTextValidation(string text)
-    {
-        if (!string.IsNullOrWhiteSpace(text) && !text.All(char.IsAsciiHexDigit))
-            return new ValidationState(false, "Invalid Hex Address");
-
-        return ValidationState.Valid;
     }
 
     #endregion
