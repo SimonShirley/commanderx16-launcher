@@ -153,9 +153,6 @@ public partial class MainWindowViewModel : ViewModelBase
     private readonly ICommand? _browseProgramPathCommand;
     public ICommand? BrowseProgramPathCommand { get => _browseProgramPathCommand; }
 
-    private readonly ICommand? _processorModeSelectedCommand;
-    public ICommand? ProcessorModeSelectedCommand { get => _processorModeSelectedCommand; }
-
     public MainWindowViewModel()
     {
         _selectEmulatorFileInteraction = new Interaction<string?, string?>();
@@ -163,8 +160,7 @@ public partial class MainWindowViewModel : ViewModelBase
 
         SetupValidations();
 
-        SetupCommands(ref _launchEmulatorCommand, ref _browseEmulatorPathCommand, ref _browseProgramPathCommand,
-                      ref _processorModeSelectedCommand);
+        SetupCommands(ref _launchEmulatorCommand, ref _browseEmulatorPathCommand, ref _browseProgramPathCommand);
     }
 
     #region "Validations"
@@ -185,9 +181,7 @@ public partial class MainWindowViewModel : ViewModelBase
 
     #endregion
 
-    private void SetupCommands(ref ICommand? launchEmulatorCommand, ref ICommand? browseEmulatorPathCommand,
-        ref ICommand? browseProgramPathCommand,
-        ref ICommand? processorModeSelectedCommand) {
+    private void SetupCommands(ref ICommand? launchEmulatorCommand, ref ICommand? browseEmulatorPathCommand, ref ICommand? browseProgramPathCommand) {
 
         launchEmulatorCommand = ReactiveCommand.Create(
             LaunchEmulatorCommandExecute,
@@ -195,10 +189,7 @@ public partial class MainWindowViewModel : ViewModelBase
 
         browseEmulatorPathCommand = ReactiveCommand.CreateFromTask(BrowseEmulatorPathCommandExecute);
         browseProgramPathCommand = ReactiveCommand.CreateFromTask(BrowseProgramPathCommandExecute);
-        processorModeSelectedCommand = ReactiveCommand.Create<string>(ProcessorModeSelectedCommandExecute);
     }
-
-    private void ProcessorModeSelectedCommandExecute(string processorMode) => ProccessorModeSelected = processorMode;
 
     private void LaunchEmulatorCommandExecute() {
         FrozenSet<string> emulatorArguments = GetX16Arguments();
