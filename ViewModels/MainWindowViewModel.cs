@@ -97,6 +97,9 @@ public partial class MainWindowViewModel : ViewModelBase
         }
     }
 
+    private readonly string[] _processorModes = ["65c02", "65c816"];
+    public string[] ProcessorModes { get => _processorModes; }
+
     private string _processorModeSelected = "65c02";
     public string ProccessorModeSelected {
         get => _processorModeSelected;
@@ -138,7 +141,7 @@ public partial class MainWindowViewModel : ViewModelBase
     }
 
     public bool ProcessorMode65c02Selected {
-        get => ProccessorModeSelected.Equals("65c02", StringComparison.InvariantCultureIgnoreCase);
+        get => ProccessorModeSelected?.Equals("65c02", StringComparison.InvariantCultureIgnoreCase) ?? false;
     }
 
     private readonly ICommand? _setSelectedJoyPadCommand;

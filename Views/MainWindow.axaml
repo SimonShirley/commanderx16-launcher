@@ -176,44 +176,26 @@
 
             <Separator Margin="0,0,0,20" />
 
-            <Grid ColumnDefinitions="Auto, *, Auto, Auto" Margin="0, 0, 0, 20">
+            <Grid ColumnDefinitions="*, Auto, Auto" Margin="0, 0, 0, 20">				
                 <TextBlock
                     Grid.Column="0"
                     Text="Processor Mode"
                     VerticalAlignment="Top"
                     Margin="0, 8, 20, 0" />
 
-                <CheckBox
+				<CheckBox
                     Grid.Column="1"
                     Content="Suppress Rockwell Warnings"
                     VerticalAlignment="Top"
-                    HorizontalAlignment="Right"                    
+                    HorizontalAlignment="Right"
                     IsEnabled="{Binding Path=ProcessorMode65c02Selected, Mode=OneWay}"
                     IsChecked="{Binding Path=SuppressRockwellWarnings}"
-                    Margin="0, 0, 10, 0" />
-
-                <RadioButton
-                    Grid.Column="2"
-                    GroupName="ProcessorMode"
-                    IsThreeState="False"
-                    IsChecked="True"
-                    Content="65c02"
-                    VerticalAlignment="Top"
-                    HorizontalAlignment="Left"                    
-                    Command="{Binding Path=ProcessorModeSelectedCommand}"
-                    CommandParameter="65c02"
-                    Margin="0, 0, 10, 0" />
-
-                <RadioButton
-                    Grid.Column="3"
-                    GroupName="ProcessorMode"
-                    IsThreeState="False"
-                    Content="65c816"
-                    VerticalAlignment="Top"
-                    HorizontalAlignment="Left"
-                    Command="{Binding Path=ProcessorModeSelectedCommand}"
-                    CommandParameter="65c816"
-                    Margin="0, 0, 10, 0" />
+                    Margin="0, 0, 20, 0" />
+				
+				<ComboBox
+					Grid.Column="2" Grid.Row="0 "
+					ItemsSource="{Binding Path=ProcessorModes}"
+					SelectedValue="{Binding Path=ProccessorModeSelected}" />
             </Grid>
 
             <Separator Margin="0,0,0,20" />
