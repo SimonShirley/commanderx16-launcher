@@ -156,19 +156,12 @@ public partial class MainWindowViewModel : ViewModelBase
     private readonly ICommand? _processorModeSelectedCommand;
     public ICommand? ProcessorModeSelectedCommand { get => _processorModeSelectedCommand; }
 
-    private readonly IObservable<bool>? LaunchEmulatorCommandCanExecute;
-
     public MainWindowViewModel()
     {
         _selectEmulatorFileInteraction = new Interaction<string?, string?>();
         _selectProgramFileInteraction = new Interaction<string?, string?>();
 
         SetupValidations();
-
-        LaunchEmulatorCommandCanExecute = this.WhenAnyValue(
-            x => x.HasErrors,
-            x => x.EmulatorPath,
-            (errors, emulatorPath) => EmulatorPathValidation.Validate(emulatorPath) == ValidationState.Valid && !errors);
 
         SetupCommands(ref _launchEmulatorCommand, ref _browseEmulatorPathCommand, ref _browseProgramPathCommand,
                       ref _setSelectedJoyPadCommand, ref _processorModeSelectedCommand);
@@ -196,7 +189,10 @@ public partial class MainWindowViewModel : ViewModelBase
         ref ICommand? browseProgramPathCommand, ref ICommand? setSelectedJoyPadCommand,
         ref ICommand? processorModeSelectedCommand) {
 
-        launchEmulatorCommand = ReactiveCommand.Create(LaunchEmulatorCommandExecute, LaunchEmulatorCommandCanExecute);
+        launchEmulatorCommand = ReactiveCommand.Create(
+            LaunchEmulatorCommandExecute,
+            this.WhenAnyValue(x => x.HasErrors, x => x.EmulatorPath, (errors, emulatorPath) => EmulatorPathValidation.Validate(emulatorPath) == ValidationState.Valid && !errors));
+
         browseEmulatorPathCommand = ReactiveCommand.CreateFromTask(BrowseEmulatorPathCommandExecute);
         browseProgramPathCommand = ReactiveCommand.CreateFromTask(BrowseProgramPathCommandExecute);
         setSelectedJoyPadCommand = ReactiveCommand.Create<int>(SetSelectedJoyPadCommandExecute);
