@@ -185,7 +185,7 @@
 
 				<CheckBox
                     Grid.Column="1"
-                    Content="Suppress Rockwell Warnings"
+                    Content="Suppress Rockwell Warnings (65c02 only)"
                     VerticalAlignment="Top"
                     HorizontalAlignment="Right"
                     IsEnabled="{Binding Path=ProcessorMode65c02Selected, Mode=OneWay}"
